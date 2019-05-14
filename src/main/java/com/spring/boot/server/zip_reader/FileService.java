@@ -91,18 +91,22 @@ public class FileService {
   @Autowired
   private Environment env;
 
-  public void upload(MultipartFile uploadFile) throws IOException {
+  public void upload(MultipartFile uploadFile, String dir) throws IOException {
     final String path =
         System.getProperty("user.dir") + File.separator + env.getProperty("paths.uploadedFiles");
-    File serverDir = new File(path, env.getProperty("paths.dir"));
+    File serverDir = new File(path, dir);
+      System.out.println(serverDir.getCanonicalPath());
+      System.out.println(serverDir.getParentFile().getCanonicalPath());
+      System.out.println(serverDir.getParentFile().listFiles().length);
     if (serverDir.getParentFile().listFiles().length != 0) {
       PathMatcher requestPathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.desc");
       Stream.of(serverDir.listFiles()).filter(p -> !requestPathMatcher.matches(p.toPath()))
           .forEach(f -> deleteFile(f));
     }
     String name = uploadFile.getOriginalFilename();
-    name.lastIndexOf('.');
-    File newServerZip = new File(serverDir, uploadFile.getOriginalFilename());
+//    name.lastIndexOf('.');
+    File newServerZip = new File(serverDir, File.separator + uploadFile.getOriginalFilename());
+      System.out.println(newServerZip.getCanonicalPath());
     String ex = name.substring(name.lastIndexOf('.') + 1);
     if (ex.equalsIgnoreCase("zip")) {
       if (!uploadFile.isEmpty()) {
@@ -132,6 +136,7 @@ public class FileService {
 //      logger.model("File " + uploadFile.getOriginalFilename() + " uploaded");
       return true;
     } catch (Exception e) {
+        System.out.println("Error upload file " + uploadFile.getName() + e.fillInStackTrace());
 //      logger.error("Error upload file " + uploadFile.getName(), e.fillInStackTrace());
       return false;
     }
