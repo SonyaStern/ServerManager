@@ -94,8 +94,8 @@ public class FileService {
   public void upload(MultipartFile uploadFile) throws IOException {
     final String path =
         System.getProperty("user.dir") + File.separator + env.getProperty("paths.uploadedFiles");
-    File serverDir = new File(path);
-    if (serverDir.listFiles().length != 0) {
+    File serverDir = new File(path, env.getProperty("paths.dir"));
+    if (serverDir.getParentFile().listFiles().length != 0) {
       PathMatcher requestPathMatcher = FileSystems.getDefault().getPathMatcher("glob:**.desc");
       Stream.of(serverDir.listFiles()).filter(p -> !requestPathMatcher.matches(p.toPath()))
           .forEach(f -> deleteFile(f));
