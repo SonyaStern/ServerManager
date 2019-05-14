@@ -16,11 +16,11 @@
 
   <dependencies>
     <!--RLCP-->
-    <dependency>
-      <groupId>org.me</groupId>
-      <artifactId>rlcp</artifactId>
-      <version>1.0</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>org.me</groupId>-->
+<!--      <artifactId>rlcp</artifactId>-->
+<!--      <version>1.0</version>-->
+<!--    </dependency>-->
 
     <!--Logging-->
     <dependency>
@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
-      <version>4.3.1.Final</version>
+      <version>6.0.15.Final</version>
     </dependency>
     <!--JSON-->
     <dependency>
@@ -98,7 +98,7 @@
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
-      <version>1.1</version>
+      <version>1.6.1</version>
     </dependency>
 
     <dependency>
@@ -121,6 +121,14 @@
       <plugin>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>9</source>
+          <target>9</target>
+        </configuration>
       </plugin>
     </plugins>
   </build>
