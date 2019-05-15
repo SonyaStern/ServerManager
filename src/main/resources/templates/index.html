@@ -1,11 +1,11 @@
 <html>
-<html ng-app="App" xmlns:th="http://www.thymeleaf.org">
+<html ng-app="App">
 <head>
     <title>First Web Application</title>
 </head>
 
 <body>
-<form action="upload-file" method="post" enctype="multipart/form-data">
+<form action="/servers/upload-file" method="POST" enctype="multipart/form-data">
     ZipFile:
     <input type="file" name="file"/>
     <input type="submit" value="Upload"/>
