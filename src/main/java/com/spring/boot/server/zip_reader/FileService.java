@@ -26,6 +26,9 @@ public class FileService {
     public static String libDir = null;
     public static String rscDir = null;
     public static String jarDir = null;
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private Environment env;
 
 //  public static void main(String[] args) throws IOException {
 //    String fileZip = "src/main/resources/unzipTest/server.zip";
@@ -75,9 +78,6 @@ public class FileService {
 //    }
 //    return true;
 //  }
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
-    @Autowired
-    private Environment env;
 
 //  public void upload(MultipartFile uploadFile, String dir) throws IOException {
 //    final String path =
@@ -124,7 +124,17 @@ public class FileService {
         }
     }
 
-    private static boolean unZipFile(File zipFile) {
+    private static void write(InputStream in, OutputStream out) throws IOException {
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = in.read(buffer)) >= 0) {
+            out.write(buffer, 0, len);
+        }
+        out.close();
+        in.close();
+    }
+
+    private boolean unZipFile(File zipFile) {
         try {
             String property = "lab.desc";
             ZipFile zip = new ZipFile(zipFile);
@@ -151,7 +161,7 @@ public class FileService {
             }
 //      logger.model(zipFile.getName() + " unzip");
 
-            zipFile.delete();
+            deleteFile(zipFile);
             zip.close();
             return true;
         } catch (IOException e) {
@@ -160,14 +170,26 @@ public class FileService {
         return false;
     }
 
-    private static void write(InputStream in, OutputStream out) throws IOException {
-        byte[] buffer = new byte[1024];
-        int len;
-        while ((len = in.read(buffer)) >= 0) {
-            out.write(buffer, 0, len);
+    private void deleteFile(File dir) throws IOException {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++) {
+                File f = new File(dir, children[i]);
+                deleteFile(f);
+            }
+
+            if (dir.delete()) {
+                logger.info("Delete dir " + dir.getAbsolutePath());
+            } else {
+                System.out.println(dir.getCanonicalPath());
+            }
+        } else {
+            if (dir.delete()) {
+                logger.info("Delete file " + dir.getAbsolutePath());
+            } else {
+                System.out.println(dir.getCanonicalPath());
+            }
         }
-        out.close();
-        in.close();
     }
 
     public void upload(MultipartFile uploadFile) throws IOException {
@@ -194,8 +216,7 @@ public class FileService {
                 throw new FileNotUploadException("Empty zip file " + uploadFile.getName());
 //        logger.error("Empty zip file " + uploadFile.getName());
             }
-        }
-        {
+        } else {
             throw new FileNotUploadException(
                     "Invalid file extension expected 'zip', actually '" + name
                             .substring(name.lastIndexOf('.') + 1) + "'");
@@ -219,20 +240,5 @@ public class FileService {
             return false;
         }
     }
-
-//    private void deleteFile(File dir) {
-//        if (dir.isDirectory()) {
-//            String[] children = dir.list();
-//            for (int i = 0; i < children.length; i++) {
-//                File f = new File(dir, children[i]);
-//                deleteFile(f);
-//            }
-//            dir.delete();
-//            logger.info("Delete dir " + dir.getAbsolutePath());
-//        } else {
-//            dir.delete();
-//            logger.info("Delete file " + dir.getAbsolutePath());
-//        }
-//    }
 
 }
