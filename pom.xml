@@ -16,11 +16,11 @@
 
   <dependencies>
     <!--RLCP-->
-<!--    <dependency>-->
-<!--      <groupId>org.me</groupId>-->
-<!--      <artifactId>rlcp</artifactId>-->
-<!--      <version>1.0</version>-->
-<!--    </dependency>-->
+    <dependency>
+      <groupId>org.me</groupId>
+      <artifactId>rlcp</artifactId>
+      <version>1.0</version>
+    </dependency>
 
     <!--Logging-->
     <dependency>

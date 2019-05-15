@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Starter</title>
+</head>
+<body>
+<div class="form-group blu-margin">
+  <form action="/servers/start-server" th:object="${serverInfo}" method="post">
+    <select class="form-control" th:object="${uploadedServers}" id="dropOperator">
+      <option value="0">select operator</option>
+      <option th:each="uploadedServer : ${uploadedServers}" th:value="${uploadedServer}"
+              th:text="${uploadedServer.jarDir}"></option>
+    </select>
+    <input name="submit" type="submit" value="submit"/>
+  </form>
+</div>
+</body>
+</html>
