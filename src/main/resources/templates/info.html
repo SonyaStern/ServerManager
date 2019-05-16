@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Info</title>
+</head>
+<body>
+<table>
+  <tbody>
+  <tr>
+    <td> Name</td>
+    <td><span th:text="${serverInfo.name}"></span></td>
+  </tr>
+  <tr>
+    <td>Port</td>
+    <td><span th:text="${serverInfo.port}"></span></td>
+  </tr>
+  <tr>
+    <td>UserLogin</td>
+    <td><span th:text="${serverInfo.userLogin}"></span></td>
+  </tr>
+  </tbody>
+</table>
+<a href="/servers/get-running-servers">Back</a>
+</body>
+</html>

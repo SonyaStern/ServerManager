@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Running Servers</title>
+</head>
+<body>
+<table>
+  <thead>
+  <tr>
+    <th> Name</th>
+    <th> Port</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:if="${runningServers.isEmpty()}">
+    <td colspan="2"> No running servers</td>
+  </tr>
+  <tr th:each="runningServer : ${runningServers}">
+    <td><span th:text="${runningServer.value.name}"></span></td>
+    <td><span th:text="${runningServer.value.port}"></span></td>
+    <td><a th:href="@{'stop-server/' + ${runningServer.key}}">Stop</a></td>
+    <td><a th:href="@{'get-info/' + ${runningServer.key}}">Info</a></td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

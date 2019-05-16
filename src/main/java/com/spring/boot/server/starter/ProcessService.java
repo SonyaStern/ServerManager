@@ -65,7 +65,8 @@ public class ProcessService {
 
     public void kill(Long pid) {
         servers.get(pid).getProcess().destroy();
-        System.out.println("Program complete");
+        servers.remove(pid);
+        System.out.println("Program completed");
     }
 
     public void recordServerInfo(Process process, ServerInfo serverInfo)
