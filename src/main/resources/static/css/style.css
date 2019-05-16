@@ -1,0 +1,62 @@
+body {
+  background-image: url("../img/servers.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.container {
+  padding: 0;
+  height: 50px;
+
+}
+
+.container > ul {
+  margin: 0;
+  /*margin-right: auto;*/
+  /*margin-left: auto;*/
+  /*width: 85%;*/
+}
+
+.container > ul > li {
+  margin: 0;
+}
+
+.container > ul > li > a {
+  padding: 14.5px;
+  padding-right: 100px;
+  padding-left: 30px;
+  height: 50px;
+  color: white;
+  font-size: 18px;
+}
+
+.container > ul > li > a:hover,
+.container > ul > li > a:focus {
+  color: black;
+  background-color: aliceblue;
+  height: 50px;
+}
+
+.fa {
+  margin: 3px;
+}
+
+.text {
+  color: darkblue;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 18px;
+  /*background-color: aliceblue;*/
+  width: 35%;
+  height: 300px;
+  margin-left: 5%;
+  opacity: 0.1%;
+  margin-top: 5%;
+  border-radius: 5%;
+}
+
+
+.text > p {
+  margin: auto;
+  padding: 5%;
+  width: 90%;
+}
