@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!--<!DOCTYPE html>-->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
@@ -9,7 +9,7 @@
         crossorigin="anonymous">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
         rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/servers/css/style.css">
 </head>
 <body>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -26,17 +26,17 @@
   <div class="container">
     <ul class="list-inline">
       <li class="list-inline-item main">
-        <a href="#">Main</a>
+        <a href="/servers">Main</a>
       </li>
       <li class="list-inline-item">
-        <a href="/servers/upload"><span class="fa fa-upload" aria-hidden="true"></span>Upload
+        <a href="upload"><span class="fa fa-upload" aria-hidden="true"></span>Upload
           a zip file</a>
       </li>
       <li class="list-inline-item">
-        <a href="/servers/starter"><span class="fa fa-play" aria-hidden="true"></span>Starter</a>
+        <a href="starter"><span class="fa fa-play" aria-hidden="true"></span>Starter</a>
       </li>
       <li class="list-inline-item">
-        <a href="/servers/get-running-servers">
+        <a href="get-running-servers">
           <span class="fa fa-bars" aria-hidden="true"></span>
           List of running servers
         </a>
@@ -45,23 +45,25 @@
   </div>
 </nav>
 
-
-<table>
-  <tbody>
-  <tr>
-    <td> Name</td>
-    <td><span th:text="${serverInfo.name}"></span></td>
-  </tr>
-  <tr>
-    <td>Port</td>
-    <td><span th:text="${serverInfo.port}"></span></td>
-  </tr>
-  <tr>
-    <td>UserLogin</td>
-    <td><span th:text="${serverInfo.userLogin}"></span></td>
-  </tr>
-  </tbody>
-</table>
-<a href="/servers/get-running-servers">Back</a>
+<div class="container table">
+  <table>
+    <tbody>
+    <tr>
+      <td class="row" scope="row"> Name</td>
+      <td><span th:text="${serverInfo.name}"></span></td>
+    </tr>
+    <tr>
+      <td class="row" scope="row">Port</td>
+      <td><span th:text="${serverInfo.port}"></span></td>
+    </tr>
+    <tr>
+      <td class="row" scope="row">UserLogin</td>
+      <td><span th:text="${serverInfo.userLogin}"></span></td>
+    </tr>
+    </tbody>
+  </table>
+  <a href="/servers/get-running-servers"><span class="fa fa-angle-double-left"
+                                               aria-hidden="true"></span>Back</a>
+</div>
 </body>
 </html>

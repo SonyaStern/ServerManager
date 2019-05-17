@@ -8,7 +8,7 @@
         crossorigin="anonymous">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
         rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+  <link rel="stylesheet" type="text/css" href="/servers/css/style.css">
 </head>
 
 <body>
@@ -26,17 +26,17 @@
   <div class="container">
     <ul class="list-inline">
       <li class="list-inline-item main">
-        <a href="#">Main</a>
+        <a href="/servers">Main</a>
       </li>
       <li class="list-inline-item">
-        <a href="/servers/upload"><span class="fa fa-upload" aria-hidden="true"></span>Upload
+        <a href="upload"><span class="fa fa-upload" aria-hidden="true"></span>Upload
           a zip file</a>
       </li>
       <li class="list-inline-item">
-        <a href="/servers/starter"><span class="fa fa-play" aria-hidden="true"></span>Starter</a>
+        <a href="starter"><span class="fa fa-play" aria-hidden="true"></span>Starter</a>
       </li>
       <li class="list-inline-item">
-        <a href="/servers/get-running-servers">
+        <a href="get-running-servers">
           <span class="fa fa-bars" aria-hidden="true"></span>
           List of running servers
         </a>
@@ -45,11 +45,13 @@
   </div>
 </nav>
 
-<form action="/servers/upload-file" method="POST" enctype="multipart/form-data">
-  ZipFile:
-  <input type="file" name="file"/>
-  <input type="submit" value="Upload"/>
-</form>
+<div class="text form">
+  <form action="upload-file" method="POST" enctype="multipart/form-data">
+    ZipFile:<br>
+    <input type="file" name="file"/>
+    <input type="submit" value="Upload"/>
+  </form>
+</div>
 </body>
 
 </html>

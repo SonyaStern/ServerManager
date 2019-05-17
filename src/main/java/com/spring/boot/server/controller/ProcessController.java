@@ -48,7 +48,8 @@ public class ProcessController {
 
             }
         }
-        return "index.html";
+        model.addAttribute("runningServers", processService.servers);
+        return "listRunningServers";
     }
 
     @GetMapping(value = "/get-running-servers")
