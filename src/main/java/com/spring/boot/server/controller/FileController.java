@@ -17,22 +17,29 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class FileController {
 
-  @Autowired
-  private final FileService fileService;
+    @Autowired
+    private final FileService fileService;
 
-  @PostMapping("/upload-file")
-  @ResponseStatus(HttpStatus.OK)
-  public String uploadFile(
-          @RequestParam MultipartFile file, Model model) {
-    fileService.upload(file);
-      model.addAttribute("uploadedServers", fileService.getUploadedServers());
-      model.addAttribute("serverInfo", new ServerInfo());
-      return "startServer";
-  }
+    @PostMapping("/upload-file")
+    @ResponseStatus(HttpStatus.OK)
+    public String uploadFile(
+            @RequestParam MultipartFile file, Model model) {
+        String message = null;
+        ServerInfo serverInfo = fileService.upload(file);
+        if (serverInfo == null) {
+            message = "You can upload only zip-files";
+            model.addAttribute("message", message);
+            return "upload";
+        } else {
+            model.addAttribute("uploadedServers", fileService.getUploadedServers());
+            model.addAttribute("serverInfo", new ServerInfo());
+            return "startServer";
+        }
+    }
 
-  @GetMapping("/upload")
-  @ResponseStatus(HttpStatus.OK)
-  public String upload() {
-    return "upload";
-  }
+    @GetMapping("/upload")
+    @ResponseStatus(HttpStatus.OK)
+    public String upload() {
+        return "upload";
+    }
 }

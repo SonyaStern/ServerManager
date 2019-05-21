@@ -1,5 +1,5 @@
 <html>
-<html ng-app="App">
+<html ng-app="App" xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Upload</title>
   <link rel="stylesheet"
@@ -51,6 +51,7 @@
     <input type="file" name="file"/>
     <input type="submit" value="Upload"/>
   </form>
+  <p style="color: red" th:text="${message}"></p>
 </div>
 </body>
 
