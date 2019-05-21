@@ -24,7 +24,7 @@ public class FileController {
     @ResponseStatus(HttpStatus.OK)
     public String uploadFile(
             @RequestParam MultipartFile file, Model model) {
-        String message = null;
+        String message;
         ServerInfo serverInfo = fileService.upload(file);
         if (serverInfo == null) {
             message = "You can upload only zip-files";
