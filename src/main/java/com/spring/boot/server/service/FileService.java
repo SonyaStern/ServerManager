@@ -1,12 +1,15 @@
-package com.spring.boot.server.zip_reader;
+package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -15,13 +18,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import lombok.Getter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FileService {
@@ -83,7 +79,9 @@ public class FileService {
             logger.info(zipFile.getName() + " unzip");
 
             zip.close();
-            uploadedServers.add(serverInfo);
+            if (!checkContainance(serverInfo)) {
+                uploadedServers.add(serverInfo);
+            }
             deleteFile(zipFile);
         } catch (IOException e) {
             logger.error("Error unzip file " + zipFile.getName(), e.fillInStackTrace());
@@ -141,5 +139,15 @@ public class FileService {
                     .substring(name.lastIndexOf('.') + 1) + "'");
         }
         return serverInfo;
+    }
+
+    public boolean checkContainance(ServerInfo serverInfo) {
+
+        for (ServerInfo server : uploadedServers) {
+            if (server.getJarDir().equals(serverInfo.getJarDir())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

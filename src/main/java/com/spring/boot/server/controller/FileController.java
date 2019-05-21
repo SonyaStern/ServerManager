@@ -1,7 +1,7 @@
 package com.spring.boot.server.controller;
 
 import com.spring.boot.server.model.ServerInfo;
-import com.spring.boot.server.zip_reader.FileService;
+import com.spring.boot.server.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,21 +1,22 @@
-package com.spring.boot.server.starter;
+package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class ProcessService {
@@ -25,15 +26,12 @@ public class ProcessService {
     public Process starter(ServerInfo serverInfo)
             throws IOException, ParserConfigurationException, SAXException {
 
-        System.out.println(serverInfo.getJarDir());
-        System.out.println(serverInfo.getRscDir());
         Process server = new ProcessBuilder(
                 "java", "-cp", "\"",
                 serverInfo.getLibDir(), ";", serverInfo.getRscDir(), "\"",
                 "-jar",
                 serverInfo.getJarDir()).start();
 
-        recordServerInfo(server, serverInfo);
         new Thread(() -> {
             try {
                 Reader errorReader = new InputStreamReader(server.getErrorStream());
@@ -60,6 +58,7 @@ public class ProcessService {
             }
         }).start();
 
+        recordServerInfo(server, serverInfo);
         return server;
     }
 
