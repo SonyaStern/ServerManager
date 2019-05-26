@@ -28,7 +28,6 @@ public class FileService {
 
     @Getter
     List<ServerInfo> uploadedServers = new ArrayList<>();
-
     @Autowired
     private Environment env;
     private final Logger logger = LoggerFactory.getLogger(this.getClass());

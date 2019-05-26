@@ -1,10 +1,12 @@
 package com.spring.boot.server.starter;
 
 import com.spring.boot.server.model.ServerInfo;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.InputStream;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
@@ -36,10 +38,14 @@ public class ProcessService {
         recordServerInfo(server, serverInfo);
         new Thread(() -> {
             try {
-                Reader errorReader = new InputStreamReader(server.getErrorStream());
+                InputStream in = server.getErrorStream();
                 int ch;
-                while ((ch = errorReader.read()) != -1) {
-                    System.out.print((char) ch);
+                byte[] buffer = new byte[1024];
+                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(
+                        new File("logs/" + servers.get(server.pid()).getName() + "Error" + LocalDate
+                                .now().toString() + ".txt")));
+                while ((ch = in.read(buffer)) >= 0) {
+                    out.write(buffer, 0, ch);
                 }
 
             } catch (IOException e) {
@@ -49,10 +55,14 @@ public class ProcessService {
 
         new Thread(() -> {
             try {
-                Reader reader = new InputStreamReader(server.getInputStream());
+                InputStream in = server.getInputStream();
                 int ch;
-                while ((ch = reader.read()) != -1) {
-                    System.out.print((char) ch);
+                byte[] buffer = new byte[1024];
+                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(
+                        new File("logs/" + servers.get(server.pid()).getName() + LocalDate.now()
+                                .toString() + ".txt")));
+                while ((ch = in.read(buffer)) >= 0) {
+                    out.write(buffer, 0, ch);
                 }
 
             } catch (IOException e) {
