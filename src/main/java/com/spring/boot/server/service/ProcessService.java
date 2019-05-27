@@ -1,22 +1,23 @@
 package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class ProcessService {
@@ -32,33 +33,41 @@ public class ProcessService {
                 "-jar",
                 serverInfo.getJarDir()).start();
 
-        new Thread(() -> {
-            try {
-                Reader errorReader = new InputStreamReader(server.getErrorStream());
-                int ch;
-                while ((ch = errorReader.read()) != -1) {
-                    System.out.print((char) ch);
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-
-        new Thread(() -> {
-            try {
-                Reader reader = new InputStreamReader(server.getInputStream());
-                int ch;
-                while ((ch = reader.read()) != -1) {
-                    System.out.print((char) ch);
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }).start();
-
         recordServerInfo(server, serverInfo);
+        new Thread(() -> {
+            try {
+                InputStream in = server.getErrorStream();
+                int ch;
+                byte[] buffer = new byte[1024];
+                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(
+                        new File("logs/" + servers.get(server.pid()).getName() + "Error" + LocalDate
+                                .now().toString() + ".txt")));
+                while ((ch = in.read(buffer)) >= 0) {
+                    out.write(buffer, 0, ch);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        new Thread(() -> {
+            try {
+                InputStream in = server.getInputStream();
+                int ch;
+                byte[] buffer = new byte[1024];
+                BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(
+                        new File("logs/" + servers.get(server.pid()).getName() + LocalDate.now()
+                                .toString() + ".txt")));
+                while ((ch = in.read(buffer)) >= 0) {
+                    out.write(buffer, 0, ch);
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }).start();
+
         return server;
     }
 
