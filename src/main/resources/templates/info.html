@@ -33,9 +33,6 @@
           a zip file</a>
       </li>
       <li class="list-inline-item">
-        <a href="/servers/starter"><span class="fa fa-play" aria-hidden="true"></span>Starter</a>
-      </li>
-      <li class="list-inline-item">
           <a href="/servers/get-all-servers">
           <span class="fa fa-bars" aria-hidden="true"></span>
               List of all servers
@@ -60,10 +57,15 @@
       <td class="row" scope="row">UserLogin</td>
       <td><span th:text="${serverInfo.userLogin}"></span></td>
     </tr>
+    <tr>
+      <td class="row" scope="row">Pid</td>
+      <td><span th:text="${serverInfo.pid}"></span></td>
+    </tr>
+
     </tbody>
   </table>
-  <a href="/servers/get-running-servers"><span class="fa fa-angle-double-left"
-                                               aria-hidden="true"></span>Back</a>
+  <a href="/servers/get-all-servers"><span class="fa fa-angle-double-left"
+                                           aria-hidden="true"></span>Back</a>
 </div>
 </body>
 </html>

@@ -1,6 +1,19 @@
 package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import javax.xml.parsers.ParserConfigurationException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,14 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import org.xml.sax.SAXException;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +56,7 @@ public class FileService {
         in.close();
     }
 
-    private ServerInfo unZipFile(File zipFile) {
+    private ServerInfo unZipFile(File zipFile) throws ParserConfigurationException, SAXException {
         ServerInfo serverInfo = new ServerInfo();
 
         try {
@@ -81,6 +87,7 @@ public class FileService {
 
             zip.close();
             if (!serverService.contains(serverInfo)) {
+                serverService.recordServerInfo(serverInfo);
                 serverService.getServers().add(serverInfo);
             }
             deleteFile(zipFile);
@@ -112,7 +119,8 @@ public class FileService {
         }
     }
 
-    public ServerInfo upload(MultipartFile uploadFile) {
+    public ServerInfo upload(MultipartFile uploadFile)
+            throws ParserConfigurationException, SAXException {
         String name = uploadFile
                 .getOriginalFilename();
 
@@ -142,5 +150,8 @@ public class FileService {
         return serverInfo;
     }
 
+    public void download() {
+
+    }
 
 }
