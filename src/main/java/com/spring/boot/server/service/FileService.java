@@ -1,7 +1,7 @@
 package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,22 +13,24 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 @Service
+@RequiredArgsConstructor
 public class FileService {
 
-    @Getter
-    List<ServerInfo> uploadedServers = new ArrayList<>();
+
     @Autowired
     private Environment env;
+
+    @Autowired
+    private final ServerService serverService;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public static void checkDir(ZipEntry entry, File destDir, ServerInfo serverInfo) {
+    private static void checkDir(ZipEntry entry, File destDir, ServerInfo serverInfo) {
         if (entry.getName().equals("server/lib/")) {
             serverInfo.setLibDir(destDir + File.separator + entry.getName() + "*");
         }
@@ -78,8 +80,8 @@ public class FileService {
             logger.info(zipFile.getName() + " unzip");
 
             zip.close();
-            if (!checkContainance(serverInfo)) {
-                uploadedServers.add(serverInfo);
+            if (!serverService.contains(serverInfo)) {
+                serverService.getServers().add(serverInfo);
             }
             deleteFile(zipFile);
         } catch (IOException e) {
@@ -91,8 +93,8 @@ public class FileService {
     private void deleteFile(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (int i = 0; i < children.length; i++) {
-                File f = new File(dir, children[i]);
+            for (String child : children) {
+                File f = new File(dir, child);
                 deleteFile(f);
             }
 
@@ -140,13 +142,5 @@ public class FileService {
         return serverInfo;
     }
 
-    public boolean checkContainance(ServerInfo serverInfo) {
 
-        for (ServerInfo server : uploadedServers) {
-            if (server.getJarDir().equals(serverInfo.getJarDir())) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

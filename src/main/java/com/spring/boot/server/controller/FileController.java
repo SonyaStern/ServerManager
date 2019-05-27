@@ -2,6 +2,7 @@ package com.spring.boot.server.controller;
 
 import com.spring.boot.server.model.ServerInfo;
 import com.spring.boot.server.service.FileService;
+import com.spring.boot.server.service.ServerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,8 @@ public class FileController {
 
     @Autowired
     private final FileService fileService;
+    @Autowired
+    private final ServerService serverService;
 
     @PostMapping("/upload-file")
     @ResponseStatus(HttpStatus.OK)
@@ -31,7 +34,7 @@ public class FileController {
             model.addAttribute("message", message);
             return "upload";
         } else {
-            model.addAttribute("uploadedServers", fileService.getUploadedServers());
+            model.addAttribute("uploadedServers", serverService.getServers());
             model.addAttribute("serverInfo", new ServerInfo());
             return "startServer";
         }

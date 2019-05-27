@@ -36,9 +36,9 @@
         <a href="/servers/starter"><span class="fa fa-play" aria-hidden="true"></span>Starter</a>
       </li>
       <li class="list-inline-item">
-        <a href="/servers/get-running-servers">
+        <a href="/servers/get-all-servers">
           <span class="fa fa-bars" aria-hidden="true"></span>
-          List of running servers
+          List of all servers
         </a>
       </li>
     </ul>
@@ -54,14 +54,16 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:if="${runningServers.isEmpty()}">
+    <tr th:if="${servers.isEmpty()}">
       <td colspan="2"> No running servers</td>
     </tr>
-    <tr th:unless="${runningServers.isEmpty()}" th:each="runningServer : ${runningServers}">
-      <td><span th:text="${runningServer.value.name}"></span></td>
-      <td><span th:text="${runningServer.value.port}"></span></td>
-      <td><a th:href="@{'stop-server/' + ${runningServer.key}}">Stop</a></td>
-      <td><a th:href="@{'get-info/' + ${runningServer.key}}">Info</a></td>
+    <tr th:unless="${servers.isEmpty()}" th:each="server : ${servers}">
+      <td><span th:text="${server.name}"></span></td>
+      <td><span th:text="${server.port}"></span></td>
+      <td th:if="${server.pid = 0}"><a th:href="@{'start-server/'}" th:object="$serverInfo" th:value="$server">Stop</a>
+      </td>
+      <td th:if="${server.pid != 0}"><a th:href="@{'stop-server/' + ${server.pid}}">Stop</a></td>
+      <!--      <td><a th:href="@{'get-info/' + ${server.pid}}">Info</a></td>-->
     </tr>
     </tbody>
   </table>

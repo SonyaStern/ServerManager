@@ -1,17 +1,8 @@
 package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -19,10 +10,19 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.time.LocalDate;
+import java.util.concurrent.ConcurrentSkipListSet;
+
 @Service
+@RequiredArgsConstructor
 public class ProcessService {
 
-    public Map<Long, ServerInfo> servers = new HashMap<>();
+    @Autowired
+    private final ServerService serverService;
 
     public Process starter(ServerInfo serverInfo)
             throws IOException, ParserConfigurationException, SAXException {
@@ -33,14 +33,14 @@ public class ProcessService {
                 "-jar",
                 serverInfo.getJarDir()).start();
 
-        recordServerInfo(server, serverInfo);
+        ServerInfo newServerInfo = recordServerInfo(server, serverInfo);
         new Thread(() -> {
             try {
                 InputStream in = server.getErrorStream();
                 int ch;
                 byte[] buffer = new byte[1024];
                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(
-                        new File("logs/" + servers.get(server.pid()).getName() + "Error" + LocalDate
+                        new File("logs/" + newServerInfo.getName() + "Error" + LocalDate
                                 .now().toString() + ".txt")));
                 while ((ch = in.read(buffer)) >= 0) {
                     out.write(buffer, 0, ch);
@@ -57,7 +57,7 @@ public class ProcessService {
                 int ch;
                 byte[] buffer = new byte[1024];
                 BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(
-                        new File("logs/" + servers.get(server.pid()).getName() + LocalDate.now()
+                        new File("logs/" + newServerInfo.getName() + LocalDate.now()
                                 .toString() + ".txt")));
                 while ((ch = in.read(buffer)) >= 0) {
                     out.write(buffer, 0, ch);
@@ -72,12 +72,17 @@ public class ProcessService {
     }
 
     public void kill(Long pid) {
-        servers.get(pid).getProcess().destroy();
-        servers.remove(pid);
+        ConcurrentSkipListSet<ServerInfo> servers = serverService.getServers();
+        for (ServerInfo serverInfo : servers) {
+            if (serverInfo.getPid().equals(pid)) {
+                serverInfo.getProcess().destroy();
+                servers.remove(serverInfo);
+            }
+        }
         System.out.println("Program completed");
     }
 
-    public void recordServerInfo(Process process, ServerInfo serverInfo)
+    private ServerInfo recordServerInfo(Process process, ServerInfo serverInfo)
             throws ParserConfigurationException, IOException, SAXException {
 
         String path =
@@ -109,12 +114,21 @@ public class ProcessService {
             serverInfo.setUserLogin(login);
             serverInfo.setUserPass(password);
             serverInfo.setProcess(process);
-            servers.put(process.pid(), serverInfo);
+            serverInfo.setPid(process.pid());
+            serverService.getServers().add(serverInfo);
         }
+        return serverInfo;
     }
 
     public ServerInfo getInfo(Long pid) {
-        return servers.get(pid);
+        ServerInfo returnedInfo = new ServerInfo();
+        ConcurrentSkipListSet<ServerInfo> servers = serverService.getServers();
+        for (ServerInfo serverInfo : servers) {
+            if (serverInfo.getPid().equals(pid)) {
+                returnedInfo = serverInfo;
+            }
+        }
+        return returnedInfo;
     }
 
 }

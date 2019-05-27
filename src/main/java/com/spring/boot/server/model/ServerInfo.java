@@ -9,8 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ServerInfo {
+public class ServerInfo implements Comparable {
 
+    Long pid;
     String name;
     String port;
     String userLogin;
@@ -20,13 +21,19 @@ public class ServerInfo {
     String rscDir;
     String libDir;
 
-    public ServerInfo(String name, String port, String userLogin, String userPass,
-            Process process) {
+    public ServerInfo(String name, String port, String userLogin, String userPass) {
         this.name = name;
         this.port = port;
         this.userLogin = userLogin;
         this.userPass = userPass;
-        this.process = process;
     }
 
+    @Override
+    public int compareTo(Object o) {
+        return 0;
+    }
+
+    public int compareTo(ServerInfo serverInfo) {
+        return serverInfo.getJarDir().equals(this.getJarDir()) ? 1 : 0;
+    }
 }

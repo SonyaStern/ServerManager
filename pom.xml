@@ -16,11 +16,11 @@
 
   <dependencies>
     <!--RLCP-->
-    <dependency>
-      <groupId>org.me</groupId>
-      <artifactId>rlcp</artifactId>
-      <version>1.0</version>
-    </dependency>
+      <!--    <dependency>-->
+      <!--      <groupId>org.me</groupId>-->
+      <!--      <artifactId>rlcp</artifactId>-->
+      <!--      <version>1.0</version>-->
+      <!--    </dependency>-->
 
     <!--Logging-->
     <dependency>
@@ -56,7 +56,14 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
-    <!--Template-->
+
+      <dependency>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-starter-test</artifactId>
+          <scope>test</scope>
+      </dependency>
+
+      <!--Template-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -101,7 +108,15 @@
       <version>1.6.1</version>
     </dependency>
 
-    <dependency>
+      <!--    <dependency>-->
+      <!--      <groupId>org.junit.jupiter</groupId>-->
+      <!--      <artifactId>junit-jupiter-api</artifactId>-->
+      <!--      <version>5.4.2</version>-->
+      <!--      <scope>test</scope>-->
+      <!--    </dependency>-->
+
+
+      <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
       <version>1</version>
@@ -113,6 +128,13 @@
       <version>1.18.6</version>
       <scope>provided</scope>
     </dependency>
+
+      <dependency>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.4</version>
+      </dependency>
+
 
   </dependencies>
 
