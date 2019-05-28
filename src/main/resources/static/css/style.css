@@ -91,3 +91,8 @@ table {
   background: rgba(255, 255, 255, 0.8);
   padding: 3%;
 }
+
+.list-group > li > a {
+ color: darkblue;
+
+}
