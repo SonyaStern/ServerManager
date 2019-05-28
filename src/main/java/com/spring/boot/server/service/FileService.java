@@ -1,27 +1,26 @@
 package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.xml.parsers.ParserConfigurationException;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 
 @Service
 @RequiredArgsConstructor
@@ -89,6 +88,7 @@ public class FileService {
             if (!serverService.contains(serverInfo)) {
                 serverService.recordServerInfo(serverInfo);
                 serverService.getServers().add(serverInfo);
+                new File("logs/" + serverInfo.getName()).mkdirs();
             }
             deleteFile(zipFile);
         } catch (IOException e) {
@@ -150,8 +150,19 @@ public class FileService {
         return serverInfo;
     }
 
-    public void download() {
+    public Resource download(ServerInfo serverInfo, String fileName) throws MalformedURLException {
 
+        Resource resource = null;
+        for (File file : serverInfo.getLogFiles()) {
+            if (file.getName().equals(fileName)) {
+                resource = new UrlResource(file.toURI());
+            }
+        }
+        if (resource.exists() || resource.isReadable()) {
+            return resource;
+        } else {
+            throw new RuntimeException("File cannot be downloaded!");
+        }
     }
 
 }

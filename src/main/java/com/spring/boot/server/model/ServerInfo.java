@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.File;
+import java.util.concurrent.ConcurrentSkipListSet;
+
 @AllArgsConstructor
 @Getter
 @Setter
@@ -20,6 +23,7 @@ public class ServerInfo implements Comparable {
     String jarDir;
     String rscDir;
     String libDir;
+    ConcurrentSkipListSet<File> logFiles = new ConcurrentSkipListSet<>();
 
     public ServerInfo(String name, String port, String userLogin, String userPass) {
         this.name = name;
@@ -33,7 +37,7 @@ public class ServerInfo implements Comparable {
         return 0;
     }
 
-    public int compareTo(ServerInfo serverInfo) {
-        return serverInfo.getJarDir().equals(this.getJarDir()) ? 1 : 0;
-    }
+//    public int compareTo(ServerInfo serverInfo) {
+//        return serverInfo.getJarDir().equals(this.getJarDir()) ? 1 : 0;
+//    }
 }

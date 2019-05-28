@@ -47,8 +47,7 @@ body {
   color: darkblue;
   background: rgba(255, 255, 255, 0.7);
   font-size: 18px;
-  /*background-color: aliceblue;*/
-  width: 35%;
+  width: 45%;
   height: 300px;
   margin-left: 5%;
   opacity: 0.1%;
@@ -65,7 +64,7 @@ body {
 }
 
 .table {
-  width: 25%;
+  width: 35%;
   padding: 3%;
   font-weight: bolder;
 }

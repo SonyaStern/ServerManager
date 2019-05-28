@@ -1,17 +1,13 @@
 package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.time.LocalDate;
-import java.util.concurrent.ConcurrentSkipListSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.*;
+import java.time.LocalDate;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Service
 @RequiredArgsConstructor
@@ -36,9 +32,10 @@ public class ProcessService {
                 InputStream in = server.getErrorStream();
                 int ch;
                 byte[] buffer = new byte[1024];
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(
-                        new File("logs/" + serverInfo.getName() + "Error" + LocalDate
-                                .now().toString() + ".txt")));
+                File file = new File("logs/" + serverInfo.getName() + "/" + serverInfo.getName() + "Error" + LocalDate
+                        .now().toString() + ".txt");
+                serverInfo.getLogFiles().add(file);
+                OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 while ((ch = in.read(buffer)) >= 0) {
                     out.write(buffer, 0, ch);
                 }
@@ -55,9 +52,10 @@ public class ProcessService {
                 InputStream in = server.getInputStream();
                 int ch;
                 byte[] buffer = new byte[1024];
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(
-                        new File("logs/" + serverInfo.getName() + LocalDate.now()
-                                .toString() + ".txt")));
+                File file = new File("logs/" + serverInfo.getName() + "/" + serverInfo.getName() + LocalDate.now()
+                        .toString() + ".txt");
+                serverInfo.getLogFiles().add(file);
+                OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
                 while ((ch = in.read(buffer)) >= 0) {
                     out.write(buffer, 0, ch);
                 }
@@ -84,9 +82,6 @@ public class ProcessService {
         }
         System.out.println("Program completed");
     }
-
-
-
 
 
 }

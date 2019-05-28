@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Running Servers</title>
+  <title>All Servers</title>
   <link rel="stylesheet"
         href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
@@ -52,7 +52,7 @@
     </thead>
     <tbody>
     <tr th:if="${servers.isEmpty()}">
-      <td colspan="2"> No running servers</td>
+      <td colspan="2"> No servers</td>
     </tr>
     <tr th:unless="${servers.isEmpty()}" th:each="server : ${servers}">
       <td><span th:text="${server.name}"></span></td>
@@ -63,6 +63,7 @@
       <td th:if="${server.pid != null}"><a th:href="@{'/stop-server/' + ${server.pid}}">Stop</a>
       </td>
       <td><a th:href="@{'/get-info/' + ${server.name}}">Info</a></td>
+      <td><a th:href="@{'/get-log-files/' + ${server.name} + '/'}">Log files</a></td>
     </tr>
     </tbody>
   </table>

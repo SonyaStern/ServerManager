@@ -3,8 +3,6 @@ package com.spring.boot.server.controller;
 import com.spring.boot.server.model.ServerInfo;
 import com.spring.boot.server.service.ProcessService;
 import com.spring.boot.server.service.ServerService;
-import java.io.IOException;
-import java.util.concurrent.ConcurrentSkipListSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.io.IOException;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Controller
 @RequiredArgsConstructor
@@ -69,8 +70,18 @@ public class ProcessController {
     @GetMapping(value = "/get-info/{name}")
     @ResponseStatus(HttpStatus.OK)
     public String getInfo(@PathVariable String name, Model model) {
-        ServerInfo serverInfo = serverService.getInfo(name);
+        ServerInfo serverInfo = serverService.getServer(name);
         model.addAttribute("serverInfo", serverInfo);
         return "info";
     }
+
+    @GetMapping(value = "/get-log-files/{name}")
+    @ResponseStatus(HttpStatus.OK)
+    public String getLogFiles(@PathVariable String name, Model model) {
+        ServerInfo serverInfo = serverService.getServer(name);
+        model.addAttribute("logFiles", serverInfo.getLogFiles());
+        return "listLogFiles";
+    }
+
+
 }
