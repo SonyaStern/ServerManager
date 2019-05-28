@@ -47,8 +47,8 @@
     <div th:if="${logFiles.isEmpty()}">
         <span>No log files</span>
     </div>
-    <ul th:unless="${logFiles.isEmpty()}" class="list-group">
-        <li class="list-group-item" th:each="logFile : ${logFiles}">
+    <ul th:unless="${logFiles.isEmpty()}">
+        <li class="link" th:each="logFile : ${logFiles}">
             <a th:href="@{'download/' + ${logFile.name}}">
                 <span th:text="${logFile.name}"></span>
             </a>

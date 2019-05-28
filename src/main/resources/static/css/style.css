@@ -7,8 +7,6 @@ body {
 
 .container {
   padding: 0;
-
-
 }
 
 .container > ul {
@@ -48,7 +46,7 @@ body {
   background: rgba(255, 255, 255, 0.7);
   font-size: 18px;
   width: 45%;
-  height: 300px;
+  height: 400px;
   margin-left: 5%;
   opacity: 0.1%;
   margin-top: 5%;
@@ -92,7 +90,12 @@ table {
   padding: 3%;
 }
 
-.list-group > li > a {
- color: darkblue;
+li {
+  list-style-type: none;
+}
 
+.table > ul > li > a:hover,
+.table > ul > li > a:focus {
+  color: darkblue;
+  padding: 0;
 }
