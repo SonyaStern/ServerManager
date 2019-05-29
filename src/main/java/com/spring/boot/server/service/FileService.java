@@ -1,6 +1,25 @@
 package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import javax.annotation.PostConstruct;
+import javax.xml.parsers.ParserConfigurationException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,32 +31,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-
 @Service
 @RequiredArgsConstructor
 public class FileService {
 
 
     @Autowired
-    private Environment env;
-
-    @Autowired
     private final ServerService serverService;
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
-
-//    @PostConstruct
-//    public void init() {
-//    }
+    @Autowired
+    private Environment env;
 
     private static void checkDir(ZipEntry entry, File destDir, ServerInfo serverInfo) {
         if (entry.getName().equals("server/lib/")) {
@@ -57,6 +60,52 @@ public class FileService {
         }
         out.close();
         in.close();
+    }
+
+    @PostConstruct
+    public void init() throws IOException, ParserConfigurationException, SAXException {
+        File folder = new File(System.getProperty("user.dir") + File.separator + env
+                .getProperty("paths.uploadedFiles"));
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                ServerInfo serverInfo = new ServerInfo();
+                for (File serverFiles : file.listFiles()) {
+                    if (serverFiles.getName().equals("lib")) {
+                        serverInfo.setLibDir(serverFiles.getCanonicalPath());
+                    }
+                    if (serverFiles.getName().equals("rsc")) {
+                        serverInfo.setRscDir(serverFiles.getCanonicalPath());
+                    }
+                    if (serverFiles.getName().contains(".jar")) {
+                        serverInfo.setJarDir(serverFiles.getCanonicalPath());
+                    }
+                }
+                serverInfo = serverService.recordServerInfo(serverInfo);
+                serverService.getServers().add(serverInfo);
+            }
+        }
+        File mainLogFolder = new File(System.getProperty("user.dir") + File.separator + env
+                .getProperty("paths.logs"));
+        for (File logFolder : mainLogFolder.listFiles()) {
+            if (logFolder.isDirectory()) {
+                for (ServerInfo server : serverService.getServers()) {
+                    if (server.getName().equals(logFolder.getName())) {
+                        for (File logFile : logFolder.listFiles()) {
+                            if (!logFile.isDirectory()) {
+                                String fileName = logFile.getName();
+                                String date = LocalDateTime
+                                        .ofInstant(Instant.ofEpochSecond(Long.decode(
+                                                fileName.substring(fileName.lastIndexOf("_") + 1,
+                                                        fileName.lastIndexOf(".")))),
+                                                ZoneId.systemDefault())
+                                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                                server.getLogFiles().put(logFile, date);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private ServerInfo unZipFile(File zipFile) throws ParserConfigurationException, SAXException {
@@ -157,7 +206,7 @@ public class FileService {
     public Resource download(ServerInfo serverInfo, String fileName) throws MalformedURLException {
 
         Resource resource = null;
-        for (File file : serverInfo.getLogFiles()) {
+        for (File file : serverInfo.getLogFiles().keySet()) {
             if (file.getName().equals(fileName)) {
                 resource = new UrlResource(file.toURI());
             }

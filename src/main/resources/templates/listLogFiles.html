@@ -57,12 +57,12 @@
         <tbody>
         <tr th:each="logFile : ${logFiles}">
             <td>
-                <a th:href="@{'download/' + ${logFile.name}}">
-                    <span th:text="${logFile.name}"></span>
+                <a th:href="@{'download/' + ${logFile.key.name}}">
+                    <span th:text="${logFile.key.name}"></span>
                 </a>
             </td>
             <td>
-                <span th:value="${LocalDateTime.now()}"></span>
+                <span th:text="${logFile.value}"></span>
             </td>
         </tr>
         </tbody>

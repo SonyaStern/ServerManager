@@ -3,6 +3,8 @@ package com.spring.boot.server.controller;
 import com.spring.boot.server.model.ServerInfo;
 import com.spring.boot.server.service.ProcessService;
 import com.spring.boot.server.service.ServerService;
+import java.io.IOException;
+import java.util.concurrent.ConcurrentSkipListSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,9 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.io.IOException;
-import java.util.concurrent.ConcurrentSkipListSet;
-
 @Controller
 @RequiredArgsConstructor
 public class ProcessController {
@@ -23,14 +22,6 @@ public class ProcessController {
     private final ProcessService processService;
     @Autowired
     private final ServerService serverService;
-
-//    @GetMapping(value = "/service")
-//    @ResponseStatus(HttpStatus.OK)
-//    public String starter(Model model) {
-//        model.addAttribute("servers", serverService.getServers());
-//        model.addAttribute("serverInfo", new ServerInfo());
-//        return "startServer";
-//    }
 
     @GetMapping(value = "/start-server/{name}")
     @ResponseStatus(HttpStatus.OK)
@@ -46,7 +37,6 @@ public class ProcessController {
                 System.out.println(2);
             }
         }
-//        model.addAttribute("serverInfo", serverInfo);
         model.addAttribute("servers", servers);
         return "listServers";
     }
@@ -54,7 +44,6 @@ public class ProcessController {
     @GetMapping(value = "/get-all-servers")
     @ResponseStatus(HttpStatus.OK)
     public String getAllServers(Model model) {
-//        model.addAttribute("serverInfo", new ServerInfo());
         model.addAttribute("servers", serverService.getServers());
         return "listServers";
     }
