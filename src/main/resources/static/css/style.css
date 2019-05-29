@@ -102,10 +102,5 @@ tbody > tr > td > a:focus {
 
 .table th,
 .table td {
-  border-top: 1px solid darkblue;
-  border-bottom: 1px solid darkblue;
-}
-
-.table th {
   border-bottom: 1px solid darkblue;
 }
