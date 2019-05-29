@@ -47,13 +47,33 @@
     <div th:if="${logFiles.isEmpty()}">
         <span>No log files</span>
     </div>
-    <ul th:unless="${logFiles.isEmpty()}">
-        <li class="link" th:each="logFile : ${logFiles}">
-            <a th:href="@{'download/' + ${logFile.name}}">
-                <span th:text="${logFile.name}"></span>
-            </a>
-        </li>
-    </ul>
+    <table>
+        <thead>
+        <tr>
+            <th>File</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="logFile : ${logFiles}">
+            <td>
+                <a th:href="@{'download/' + ${logFile.name}}">
+                    <span th:text="${logFile.name}"></span>
+                </a>
+            </td>
+            <td>
+                <span th:value="${LocalDateTime.now()}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!--    <ul th:unless="${logFiles.isEmpty()}">-->
+    <!--        <li class="link" th:each="logFile : ${logFiles}">-->
+    <!--            <a th:href="@{'download/' + ${logFile.name}}">-->
+    <!--                <span th:text="${logFile.name}"></span>-->
+    <!--            </a>-->
+    <!--        </li>-->
+    <!--    </ul>-->
     <a href="/servers/get-all-servers"><span class="fa fa-angle-double-left"
                                              aria-hidden="true"></span>Back</a>
 </div>

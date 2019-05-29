@@ -1,17 +1,13 @@
 package com.spring.boot.server.service;
 
 import com.spring.boot.server.model.ServerInfo;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.time.LocalDate;
-import java.util.concurrent.ConcurrentSkipListSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.*;
+import java.time.ZonedDateTime;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +31,8 @@ public class ProcessService {
             try {
                 InputStream in = server.getErrorStream();
                 byte[] buffer = new byte[1024];
-                File file = new File("logs/" + serverInfo.getName() + "/" + serverInfo.getName() + "Error" + LocalDate
-                        .now().toString() + ".txt");
+                File file = new File("logs/" + serverInfo.getName() + "/" + serverInfo.getName() + "Error_" + ZonedDateTime
+                        .now().toEpochSecond() + ".txt");
                 writeLogFile(serverInfo, in, buffer, file);
 
             } catch (IOException e) {
@@ -48,8 +44,8 @@ public class ProcessService {
             try {
                 InputStream in = server.getInputStream();
                 byte[] buffer = new byte[1024];
-                File file = new File("logs/" + serverInfo.getName() + "/" + serverInfo.getName() + LocalDate.now()
-                        .toString() + ".txt");
+                File file = new File("logs/" + serverInfo.getName() + "/" + serverInfo.getName() + "_" + ZonedDateTime.now().toEpochSecond()
+                        + ".txt");
                 writeLogFile(serverInfo, in, buffer, file);
 
             } catch (IOException e) {

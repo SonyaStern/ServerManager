@@ -35,6 +35,10 @@ public class FileService {
 
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
+//    @PostConstruct
+//    public void init() {
+//    }
+
     private static void checkDir(ZipEntry entry, File destDir, ServerInfo serverInfo) {
         if (entry.getName().equals("server/lib/")) {
             serverInfo.setLibDir(destDir + File.separator + entry.getName() + "*");
