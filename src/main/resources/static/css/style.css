@@ -37,7 +37,7 @@ body {
 }
 
 .text,
-.table {
+.myTable {
   color: darkblue;
   background: rgba(255, 255, 255, 0.8);
   font-size: 18px;
@@ -50,15 +50,16 @@ body {
 
 
 .text > p,
-.table > a {
+.myTable > a {
   margin: auto;
   padding: 5%;
   width: 90%;
 }
 
-.table {
+.myTable {
   width: 35%;
   padding-top: 3%;
+  padding-bottom: 3%;
   font-weight: bolder;
 }
 
@@ -100,7 +101,12 @@ tbody > tr > td > a:focus {
   padding: 0;
 }
 
-.table th,
-.table td {
+.myTable tr,
+.myTable td {
   border-bottom: 1px solid darkblue;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 2%;
 }
