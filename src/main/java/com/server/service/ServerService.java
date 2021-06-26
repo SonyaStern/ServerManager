@@ -1,6 +1,6 @@
-package com.spring.boot.server.service;
+package com.server.service;
 
-import com.spring.boot.server.model.ServerInfo;
+import com.server.model.ServerInfo;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ConcurrentSkipListSet;
@@ -21,7 +21,7 @@ public class ServerService {
     @Getter
     public ConcurrentSkipListSet<ServerInfo> servers = new ConcurrentSkipListSet<>();
 
-    boolean contains(ServerInfo serverInfo) {
+    public boolean contains(ServerInfo serverInfo) {
 
         for (ServerInfo server : servers) {
             if (server.getJarDir().equals(serverInfo.getJarDir()) || server.getName()
@@ -32,7 +32,7 @@ public class ServerService {
         return false;
     }
 
-    ServerInfo recordServerInfo(ServerInfo serverInfo)
+    public ServerInfo recordServerInfo(ServerInfo serverInfo)
             throws ParserConfigurationException, IOException, SAXException {
 
         String path =

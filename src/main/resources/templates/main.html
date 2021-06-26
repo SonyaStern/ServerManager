@@ -1,0 +1,148 @@
+<!--<!DOCTYPE html>-->
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>All Servers</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+          crossorigin="anonymous">
+    <!--    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"-->
+    <!--          rel="stylesheet">-->
+    <link rel="stylesheet" type="text/css" href="/servers/css/style.css">
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js" language="JavaScript"></script>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script src="https://unpkg.com/feather-icons"></script>
+<script src="/servers/js/liquidFillGauge.js" language="JavaScript"></script>
+<script src="/servers/js/monitoring-history-graph.js" language="JavaScript"></script>
+<script src="/servers/js/draw-monitoring.js" language="JavaScript"></script>
+<script src="/servers/js/upload-script.js"></script>
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"-->
+<!--        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"-->
+<!--        crossorigin="anonymous"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>-->
+
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand bar-heading col-sm-3 col-md-2 mr-0" href="#">Server manager</a>
+</nav>
+
+<div class="container-fluid">
+    <nav id="sidebarMenu" class="col-lg-2 col-md-2 d-md-block bg-light sidebar collapse">
+        <div class="sidebar-sticky pt-3">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span data-feather="list"></span>
+                        Servers
+                    </a>
+                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link" href="#">-->
+<!--                        <span data-feather="book"></span>-->
+<!--                        Requests-->
+<!--                    </a>-->
+<!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="/servers/get-log-files">
+                        <span data-feather="bar-chart-2"></span>
+                        Logs
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <main role="main" class="ml-sm-auto col-lg-10 col-md-10 px-md-4">
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                        <tr>
+                            <th> Name</th>
+                            <th> Port</th>
+                            <th colspan="3"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${servers.isEmpty()}">
+                            <td colspan="3"> No servers</td>
+                        </tr>
+                        <tr th:unless="${servers.isEmpty()}" th:each="server : ${servers}">
+                            <td><span th:text="${server.name}"></span></td>
+                            <td><span th:text="${server.port}"></span></td>
+                            <td th:if="${server.pid == null}">
+                                <a th:href="@{'/start-server/' + ${server.name}}">Start</a>
+                            </td>
+                            <td th:if="${server.pid != null}"><a th:href="@{'/stop-server/' + ${server.pid}}">Stop</a>
+                            </td>
+                            <td><a th:href="@{'/get-info/' + ${server.name}}">Info</a></td>
+                            <td><a th:href="@{'/get-log-files/' + ${server.name} + '/'}">Log files</a></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                        <tr>
+                            <th> User</th>
+                            <th> Server name</th>
+                            <th> Port</th>
+                            <th> Date</th>
+                            <th> Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${requests.isEmpty()}">
+                            <td colspan="5"> No requests</td>
+                        </tr>
+                        <tr th:unless="${requests.isEmpty()}" th:each="request : ${requests}">
+                            <td><span th:text="${request.getUser()}"></span></td>
+                            <td><span th:text="${request.getServerName()}"></span></td>
+                            <td><span th:text="${request.getPort()}"></span></td>
+                            <td><span th:text="${request.getDateTime()}"></span></td>
+                            <td><span th:text="${request.getAction()}"></span></td>
+                            <td><span th:text="${request.getDuration()}"></span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="upload">
+                    <form id="upload-container" action="upload-file" method="POST" enctype="multipart/form-data">
+                        <img id="upload-image" src="/servers/img/upload.png">
+                        <div>
+                            <input id="file-input" type="file" name="file" multiple>
+                            <label id="file-input-message" for="file-input">Choose file to upload</label>
+                            <span id="uploadMsg">or drag it</span>
+                            <!--                        <span>ZIP file:</span><br>-->
+                            <!--                        <input type="file" class="form-control-file" name="file"/>-->
+                            <input class="btn btn-secondary" onclick="sendFiles(this.file)" type="submit" value="Upload"/>
+                            <p style="color: red" th:text="${message}"></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <div class="gauge">
+                    <svg id="fillgauge1" width="95%" height="200"></svg>
+                </div>
+                <div class="gauge">
+                    <svg id="fillgauge2" width="95%" height="200"></svg>
+                </div>
+                <div class="graph">
+                    <svg id="historyGraph1" width="95%" height="200"></svg>
+                </div>
+                <div class="graph">
+                    <svg id="historyGraph2" width="95%" height="200"></svg>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script>
+    feather.replace()
+</script>
+</body>
+</html>

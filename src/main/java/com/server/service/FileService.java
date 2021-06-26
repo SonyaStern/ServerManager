@@ -1,12 +1,22 @@
-package com.spring.boot.server.service;
+package com.server.service;
 
-import com.spring.boot.server.model.ServerInfo;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.server.model.RequestModel;
+import com.server.model.ServerInfo;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
+import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXException;
+
+import javax.annotation.PostConstruct;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,27 +28,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.annotation.PostConstruct;
-import javax.xml.parsers.ParserConfigurationException;
-import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import org.xml.sax.SAXException;
 
 @Service
 @RequiredArgsConstructor
 public class FileService {
 
 
-    @Autowired
     private final ServerService serverService;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final RequestService requestService;
+    private final Logger logger = LoggerFactory.getLogger(FileService.class);
     @Autowired
     private Environment env;
 
@@ -66,6 +64,7 @@ public class FileService {
     public void init() throws IOException, ParserConfigurationException, SAXException {
         File folder = new File(System.getProperty("user.dir") + File.separator + env
                 .getProperty("paths.uploadedFiles"));
+//        File[] files = folder.listFiles();
         for (File file : folder.listFiles()) {
             if (file.isDirectory()) {
                 ServerInfo serverInfo = new ServerInfo();
@@ -173,7 +172,9 @@ public class FileService {
     }
 
     public ServerInfo upload(MultipartFile uploadFile)
-            throws ParserConfigurationException, SAXException {
+            throws ParserConfigurationException, SAXException, IOException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         String name = uploadFile
                 .getOriginalFilename();
 
@@ -192,7 +193,9 @@ public class FileService {
                 File unzipFile = new File(System.getProperty("user.dir") + File.separator + env
                         .getProperty("paths.uploadedFiles"), name);
                 serverInfo = unZipFile(unzipFile);
-
+                stopWatch.stop();
+                RequestModel requestModel = new RequestModel(serverInfo, "Server upload", stopWatch.getTotalTimeSeconds());
+                requestService.saveRequest(requestModel);
             } else {
                 logger.error("Empty zip file " + uploadFile.getName());
             }
@@ -203,15 +206,19 @@ public class FileService {
         return serverInfo;
     }
 
-    public Resource download(ServerInfo serverInfo, String fileName) throws MalformedURLException {
-
+    public Resource download(ServerInfo serverInfo, String fileName) throws IOException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         Resource resource = null;
         for (File file : serverInfo.getLogFiles().keySet()) {
             if (file.getName().equals(fileName)) {
                 resource = new UrlResource(file.toURI());
             }
         }
+        stopWatch.stop();
         if (resource.exists() || resource.isReadable()) {
+            RequestModel requestModel = new RequestModel(serverInfo, "Log download", stopWatch.getTotalTimeSeconds());
+            requestService.saveRequest(requestModel);
             return resource;
         } else {
             throw new RuntimeException("File cannot be downloaded!");

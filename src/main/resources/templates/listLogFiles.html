@@ -23,53 +23,68 @@
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
 
-<nav class="navbar navbar-dark bg-primary navbar-fixed-top">
-    <div class="container">
-        <ul class="list-inline">
-            <li class="list-inline-item main">
-                <a href="/servers">Main</a>
-            </li>
-            <li class="list-inline-item">
-                <a href="/servers/upload"><span class="fa fa-upload" aria-hidden="true"></span>Upload
-                    a zip file</a>
-            </li>
-            <li class="list-inline-item">
-                <a href="/servers/get-all-servers">
-                    <span class="fa fa-bars" aria-hidden="true"></span>
-                    List of all servers
-                </a>
-            </li>
-        </ul>
-    </div>
+<nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand bar-heading col-sm-3 col-md-2 mr-0" href="#">Server manager</a>
 </nav>
 
-<div class="container myTable">
-    <div th:if="${logFiles.isEmpty()}">
-        <span>No log files</span>
-    </div>
-    <table>
-        <thead>
-        <tr>
-            <th>File</th>
-            <th>Date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="logFile : ${logFiles}">
-            <td>
-                <a th:href="@{'download/' + ${logFile.key.name}}">
-                    <span th:text="${logFile.key.name}"></span>
-                </a>
-            </td>
-            <td>
-                <span th:text="${logFile.value}"></span>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <a href="/servers/get-all-servers"><span class="fa fa-angle-double-left"
-                                             aria-hidden="true"></span>Back</a>
+<div class="container-fluid">
+    <nav id="sidebarMenu" class="col-lg-2 col-md-2 d-md-block bg-light sidebar collapse">
+        <div class="sidebar-sticky pt-3">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="#">
+                        <span data-feather="list"></span>
+                        Servers
+                    </a>
+                </li>
+<!--                <li class="nav-item">-->
+<!--                    <a class="nav-link" href="#">-->
+<!--                        <span data-feather="book"></span>-->
+<!--                        Requests-->
+<!--                    </a>-->
+<!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="/servers/get-log-files">
+                        <span data-feather="bar-chart-2"></span>
+                        Logs
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <main role="main" class="ml-sm-auto col-lg-10 col-md-10 px-md-4">
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <div class="table-responsive">
+                    <div th:if="${logFiles.isEmpty()}">
+                        <span>No log files</span>
+                    </div>
+                    <table class="table table-hover table-sm">
+                        <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="logFile : ${logFiles}">
+                            <td>
+                                <a th:href="@{'download/' + ${logFile.key.name}}">
+                                    <span th:text="${logFile.key.name}"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <span th:text="${logFile.value}"></span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <a href="/servers/main"><span class="fa fa-angle-double-left"
+                                                  aria-hidden="true"></span>Back</a>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
-
 </body>
 </html>

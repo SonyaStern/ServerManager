@@ -1,112 +1,132 @@
-body {
-  background-image: url("/servers/img/servers.jpg");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
+.navbar-brand {
+    padding-top: .85rem;
+    padding-bottom: .85rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    /*background-color: rgba(0, 0, 0, .25);*/
+    /*box-shadow: inset -1px 0 0 rgba(0, 0, 0, .25);*/
 }
 
-.container {
-  padding: 0;
+.row,
+.sidebar {
+    padding: 55px 0 0; /* Height of navbar */
 }
 
-.container > ul {
-  margin: 0;
+.sidebar {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100; /* Behind the navbar */
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
 }
 
-.container > ul > li {
-  margin: 0;
+.sidebar-sticky {
+    position: relative;
+    top: 0;
+    height: calc(100vh);
+    padding-top: .5rem;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
 }
 
-.container > ul > li > a {
-  padding: 14.5px;
-  padding-right: 100px;
-  padding-left: 30px;
-  height: 50px;
-  color: white;
-  font-size: 18px;
+@supports ((position: -webkit-sticky) or (position: sticky)) {
+    .sidebar-sticky {
+        position: -webkit-sticky;
+        position: sticky;
+    }
 }
 
-.container > ul > li > a:hover,
-.container > ul > li > a:focus {
-  color: black;
-  background-color: aliceblue;
-  height: 50px;
+.sidebar .nav-link {
+    color: #161057;
+    font-size: .85rem;
+    text-transform: uppercase;
 }
 
-.fa {
-  margin: 3px;
+.sidebar .nav-link .feather {
+    margin-right: 4px;
+    color: #999;
 }
 
-.text,
-.myTable {
-  color: darkblue;
-  background: rgba(255, 255, 255, 0.8);
-  font-size: 18px;
-  /*width: 45%;*/
-  /*height: 400px;*/
-  margin-left: 5%;
-  margin-top: 5%;
-  border-radius: 5%;
+.sidebar .nav-link:hover {
+    color: #5453c2;
+}
+
+.table-responsive,
+.upload {
+    box-shadow: 0 0 10px #ccc;
+}
+
+.table-responsive {
+    margin-top: 15px;
+    padding-top: 15px;
+    min-height: 200px;
+    max-height: 350px;
+}
+
+.upload {
+    height: 250px;
+    margin-top: 35px;
+    margin-bottom: 35px;
+    padding-top: 35px;
+    /*padding-bottom: 55px;*/
+}
+
+div.gauge {
+    padding-top: 30px;
+    height: 250px;
+}
+
+#upload-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    /*width: 400px;*/
+    height: 170px;
+    /*outline: 2px dashed #5d5d5d;*/
+    /*outline-offset: -12px;*/
+    /*background-color: #e0f2f7;*/
+    /*font-family: 'Segoe UI';*/
+    color: #1f3c44;
+}
+
+#upload-container img {
+    width: 20%;
+    /*margin-bottom: 20px;*/
+/*user-select: none;*/
 }
 
 
-.text > p,
-.myTable > a {
-  margin: auto;
-  padding: 5%;
-  width: 90%;
+#upload-container label {
+    font-weight: bold;
 }
 
-.myTable {
-  width: 35%;
-  padding-top: 3%;
-  padding-bottom: 3%;
-  font-weight: bolder;
+#upload-container input[type=file]:focus + label {
+    outline: 1px solid #0078d7;
+    outline: -webkit-focus-ring-color auto 5px;
 }
 
-table {
-  width: 85%;
-  margin-left: 30px;
-  padding-top: 25px;
-  margin-bottom: 25px;
+#upload-container label:hover {
+    cursor: pointer;
+    text-decoration: underline;
 }
 
-.row {
-  font-size: 19px;
-  font-weight: bolder;
+#upload-container div {
+    position: relative;
+    z-index: 10;
 }
 
-#serverInfo {
-  width: 50%;
-  background: rgba(255, 255, 255, 0.8);
+#upload-container input[type=file] {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    position: absolute;
+    z-index: -10;
 }
 
-.form {
-  width: 50%;
-  background: rgba(255, 255, 255, 0.8);
-  padding: 3%;
+#upload-container.dragover {
+    background-color: #fafafa;
+    outline-offset: -100px;
 }
 
-li {
-  list-style-type: none;
-}
-
-tbody > tr > td > a {
-  color: darkblue;
-  padding: 0;
-}
-
-tbody > tr > td > a:hover,
-tbody > tr > td > a:focus {
-  color: rebeccapurple;
-  padding: 0;
-}
-
-.myTable tr,
-.myTable td {
-  border-bottom: 1px solid darkblue;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 2%;
-}

@@ -1,30 +1,33 @@
-package com.spring.boot.server.service;
+package com.server.service;
 
-import com.spring.boot.server.model.ServerInfo;
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.server.model.RequestModel;
+import com.server.model.ServerInfo;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
+
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.ConcurrentSkipListSet;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ProcessService {
 
-    @Autowired
     private final ServerService serverService;
+    private final RequestService requestService;
+    private final Logger logger = LoggerFactory.getLogger(FileService.class);
 
     public Process starter(ServerInfo serverInfo)
             throws IOException {
-
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         Process server = new ProcessBuilder(
                 "java", "-cp", "\"",
                 serverInfo.getLibDir(), ";", serverInfo.getRscDir(), "\"",
@@ -62,7 +65,9 @@ public class ProcessService {
                 e.printStackTrace();
             }
         }).start();
-
+        stopWatch.stop();
+        RequestModel requestModel = new RequestModel(serverInfo, "Server start", stopWatch.getTotalTimeSeconds());
+        requestService.saveRequest(requestModel);
         return server;
     }
 
@@ -79,7 +84,9 @@ public class ProcessService {
         in.close();
     }
 
-    public void kill(Long pid) {
+    public void kill(Long pid) throws IOException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
         ConcurrentSkipListSet<ServerInfo> servers = serverService.getServers();
         for (ServerInfo serverInfo : servers) {
             if (serverInfo.getPid().equals(pid)) {
@@ -87,9 +94,12 @@ public class ProcessService {
                 servers.remove(serverInfo);
                 serverInfo.setPid(null);
                 servers.add(serverInfo);
+                stopWatch.stop();
+                RequestModel requestModel = new RequestModel(serverInfo, "Server named " + serverInfo.getName() + " was stopped", stopWatch.getTotalTimeSeconds());
+                requestService.saveRequest(requestModel);
+                logger.info("Server named {} was stopped", serverInfo.getName());
             }
         }
-        System.out.println("Program completed");
     }
 
 
