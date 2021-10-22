@@ -19,13 +19,15 @@ function loadHistoryGraph(elementId, timeSpots, cpuS) {
 
     console.log("CPU " + cpuS)
     console.log("Time " + timeSpots)
+
     // Add X axis --> it is a date format
-    let x = d3.scaleLinear()
-        .domain([0, d3.max(cpuS)])
+    let x = d3.scaleTime()
+        .domain(d3.extent(timeSpots))
         .range([0, width]);
     svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
+        .attr("transform", "translate(0, " + height + ")")
         .call(d3.axisBottom().scale(x));
+
 
     // Max value observed:
     // const max = timeSpots.values)
@@ -35,8 +37,8 @@ function loadHistoryGraph(elementId, timeSpots, cpuS) {
         d[0] = parseDate(d[0]);
     });
     // Add Y axis
-    let y = d3.scaleTime()
-        .domain(d3.extent(timeSpots))
+    let y = d3.scaleLinear()
+        .domain([0, d3.max(cpuS)])
         .range([height, 0]);
     svg.append("g")
         .call(d3.axisLeft().scale(y));

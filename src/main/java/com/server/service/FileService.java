@@ -2,6 +2,25 @@ package com.server.service;
 
 import com.server.model.RequestModel;
 import com.server.model.ServerInfo;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.Enumeration;
+import java.util.Objects;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import javax.annotation.PostConstruct;
+import javax.xml.parsers.ParserConfigurationException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,21 +32,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
-
-import javax.annotation.PostConstruct;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 @Service
 @RequiredArgsConstructor
@@ -64,32 +68,33 @@ public class FileService {
     public void init() throws IOException, ParserConfigurationException, SAXException {
         File folder = new File(System.getProperty("user.dir") + File.separator + env
                 .getProperty("paths.uploadedFiles"));
-//        File[] files = folder.listFiles();
-        for (File file : folder.listFiles()) {
-            if (file.isDirectory()) {
-                ServerInfo serverInfo = new ServerInfo();
-                for (File serverFiles : file.listFiles()) {
-                    if (serverFiles.getName().equals("lib")) {
-                        serverInfo.setLibDir(serverFiles.getCanonicalPath());
+        if (folder.isDirectory()) {
+            for (File file : Objects.requireNonNull(folder.listFiles())) {
+                if (file.isDirectory()) {
+                    ServerInfo serverInfo = new ServerInfo();
+                    for (File serverFiles : Objects.requireNonNull(file.listFiles())) {
+                        if (serverFiles.getName().equals("lib")) {
+                            serverInfo.setLibDir(serverFiles.getCanonicalPath());
+                        }
+                        if (serverFiles.getName().equals("rsc")) {
+                            serverInfo.setRscDir(serverFiles.getCanonicalPath());
+                        }
+                        if (serverFiles.getName().contains(".jar")) {
+                            serverInfo.setJarDir(serverFiles.getCanonicalPath());
+                        }
                     }
-                    if (serverFiles.getName().equals("rsc")) {
-                        serverInfo.setRscDir(serverFiles.getCanonicalPath());
-                    }
-                    if (serverFiles.getName().contains(".jar")) {
-                        serverInfo.setJarDir(serverFiles.getCanonicalPath());
-                    }
+                    serverInfo = serverService.recordServerInfo(serverInfo);
+                    serverService.getServers().add(serverInfo);
                 }
-                serverInfo = serverService.recordServerInfo(serverInfo);
-                serverService.getServers().add(serverInfo);
             }
         }
         File mainLogFolder = new File(System.getProperty("user.dir") + File.separator + env
                 .getProperty("paths.logs"));
-        for (File logFolder : mainLogFolder.listFiles()) {
+        for (File logFolder : Objects.requireNonNull(mainLogFolder.listFiles())) {
             if (logFolder.isDirectory()) {
                 for (ServerInfo server : serverService.getServers()) {
                     if (server.getName().equals(logFolder.getName())) {
-                        for (File logFile : logFolder.listFiles()) {
+                        for (File logFile : Objects.requireNonNull(logFolder.listFiles())) {
                             if (!logFile.isDirectory()) {
                                 String fileName = logFile.getName();
                                 String date = LocalDateTime
@@ -113,10 +118,11 @@ public class FileService {
         try {
             String property = "lab.desc";
             ZipFile zip = new ZipFile(zipFile);
-            Enumeration entries = zip.entries();
+//            TODO: parametrized
+            Enumeration<? extends ZipEntry> entries = zip.entries();
 
             while (entries.hasMoreElements()) {
-                ZipEntry entry = (ZipEntry) entries.nextElement();
+                ZipEntry entry = entries.nextElement();
                 if (entry.isDirectory()) {
                     checkDir(entry, zipFile.getParentFile().getCanonicalFile(), serverInfo);
                     new File(zipFile.getParent(), entry.getName()).mkdirs();
@@ -152,7 +158,7 @@ public class FileService {
     private void deleteFile(File dir) {
         if (dir.isDirectory()) {
             String[] children = dir.list();
-            for (String child : children) {
+            for (String child : Objects.requireNonNull(children)) {
                 File f = new File(dir, child);
                 deleteFile(f);
             }
@@ -179,7 +185,7 @@ public class FileService {
                 .getOriginalFilename();
 
         ServerInfo serverInfo = null;
-        if (name.substring(name.lastIndexOf('.') + 1).equalsIgnoreCase("zip")) {
+        if (Objects.requireNonNull(name).substring(name.lastIndexOf('.') + 1).equalsIgnoreCase("zip")) {
             if (!uploadFile.isEmpty()) {
                 try {
                     byte[] bytes = uploadFile.getBytes();
@@ -194,7 +200,8 @@ public class FileService {
                         .getProperty("paths.uploadedFiles"), name);
                 serverInfo = unZipFile(unzipFile);
                 stopWatch.stop();
-                RequestModel requestModel = new RequestModel(serverInfo, "Server upload", stopWatch.getTotalTimeSeconds());
+                RequestModel requestModel =
+                        new RequestModel(serverInfo, "Server upload", stopWatch.getTotalTimeSeconds());
                 requestService.saveRequest(requestModel);
             } else {
                 logger.error("Empty zip file " + uploadFile.getName());
@@ -216,7 +223,7 @@ public class FileService {
             }
         }
         stopWatch.stop();
-        if (resource.exists() || resource.isReadable()) {
+        if (Objects.requireNonNull(resource).exists() || resource.isReadable()) {
             RequestModel requestModel = new RequestModel(serverInfo, "Log download", stopWatch.getTotalTimeSeconds());
             requestService.saveRequest(requestModel);
             return resource;
