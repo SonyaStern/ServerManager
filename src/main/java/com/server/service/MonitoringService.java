@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -16,21 +16,21 @@ import java.util.List;
 public class MonitoringService {
 
     private final JavaSysMon javaSysMon;
-    private static List<Float> cpuHistory = new LinkedList<>();
+    private static SortedMap<LocalDateTime, Float> cpuHistory = new TreeMap<>();
     private static List<Long> memoryHistory = new LinkedList<>();
-    private static final int listCapacity = 60;
+    private static final int LIST_CAPACITY = 60;
 
-    public List<Float> getCpuHistory() {
-        if (cpuHistory.size() > listCapacity) {
-            cpuHistory = cpuHistory.subList(cpuHistory.size() - listCapacity, cpuHistory.size());
-        }
+    public SortedMap<LocalDateTime, Float> getCpuHistory() {
+//        if (cpuHistory.size() > LIST_CAPACITY) {
+//            cpuHistory = cpuHistory.subMap(cpuHistory.size() - LIST_CAPACITY, cpuHistory.size());
+//        }
         log.info("CPU history size: {}", cpuHistory.size());
         return cpuHistory;
     }
 
     public List<Long> getMemoryHistory() {
-        if (memoryHistory.size() > listCapacity) {
-            memoryHistory = memoryHistory.subList(memoryHistory.size() - listCapacity, memoryHistory.size());
+        if (memoryHistory.size() > LIST_CAPACITY) {
+            memoryHistory = memoryHistory.subList(memoryHistory.size() - LIST_CAPACITY, memoryHistory.size());
         }
         log.info("Memory history size: {}", memoryHistory.size());
         return memoryHistory;
@@ -48,7 +48,7 @@ public class MonitoringService {
 //        TODO: change to debug
         log.info("CPU usage: {}", cpuUsage);
         log.info("CPU usage: {}", cpuUsage1);
-        cpuHistory.add(cpuUsage1 * 100);
+        cpuHistory.put(LocalDateTime.now(), cpuUsage1 * 100);
         return cpuUsage1 * 100;
     }
 

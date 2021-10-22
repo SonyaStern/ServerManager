@@ -2,12 +2,15 @@ let gauge1;
 let gauge2;
 let graph1
 
+let timeSpots = [];
+let cpuS = [];
+
 window.onload = function () {
 
     // getCpuUsage();
     // getMemoryUsage();
 
-    setInterval(function(){
+    setInterval(function () {
         getCpuUsage();
         getMemoryUsage()
         getCpuHistory()
@@ -37,12 +40,23 @@ async function getCpuHistory() {
         url: '/servers/get-cpu-history',
         success: function (data) {
             console.log(data);
+            let i = 0;
+            $.each(data, function(key, val){
+// This function will called for each key-val pair.
+// You can do anything here with them.
+//                 console.log("key " + key);
+                timeSpots[i] = key;
+                // console.log("value " + val);
+                cpuS[i] = val;
+                i++;
+
+            });
             // cpu = data;
-            if (graph1 == null) {
-                graph1 = loadHistoryGraph("historyGraph1", data);
-            } else {
-                graph1.update(data);
-            }
+//            if (graph1 == null) {
+                graph1 = loadHistoryGraph("historyGraph1", timeSpots, cpuS);
+//            } else {
+//                graph1.update(data);
+//            }
         }
     });
 }
