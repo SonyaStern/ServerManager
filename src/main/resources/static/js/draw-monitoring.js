@@ -2,20 +2,17 @@ let gauge1;
 let gauge2;
 let graph1
 
-// let timeSlots = [];
-// let cpuS = [];
-
 window.onload = function () {
 
     // getCpuUsage();
     // getMemoryUsage();
+    getCpuHistory();
 
     setInterval(function () {
         getCpuUsage();
-        getMemoryUsage()
-        getCpuHistory()
+        getMemoryUsage();
+        updateCpuHistory();
     }, 3000);
-
 }
 
 async function getCpuUsage() {
@@ -46,19 +43,24 @@ async function getCpuHistory() {
             $.each(data, function(key, val){
 // This function will called for each key-val pair.
 // You can do anything here with them.
-//                 console.log("key " + key);
-//                 timeSlots[i] = key;
-                // console.log("value " + val);
-                // cpuS[i] = val;
-                // i++;
                 dict.push({time: parseTime(key), load: val});
             });
-            // cpu = data;
-           if (graph1 == null) {
                 graph1 = loadHistoryGraph("historyGraph1", dict);
-           } else {
-               graph1.update(data);
-           }
+        }
+    });
+}
+
+async function updateCpuHistory() {
+    $.ajax({
+        type: 'Get',
+        url: '/servers/get-cpu-history',
+        success: function (data) {
+            let dict = [];
+            let parseTime = d3.timeParse("%H:%M:%S");
+            $.each(data, function(key, val){
+                dict.push({time: parseTime(key), load: val});
+            });
+                graph1 = updateData("historyGraph1", dict);
         }
     });
 }

@@ -1,43 +1,68 @@
+var margin = {top: 10, right: 30, bottom: 30, left: 60},
+    width = 550 - margin.left - margin.right,
+    height = 200 - margin.top - margin.bottom;
+
+// Add X axis
+var x = d3.scaleTime()
+    .range([0, width]);
+
+var xAxis = d3.axisBottom(x)
+    .tickFormat(d3.timeFormat("%H:%M:%S"))
+    .ticks(5);
+// Add Y axis
+var y = d3.scaleLinear()
+    .range([height, 0]);
+
+var yAxis = d3.axisLeft(y)
+    .ticks(5);
+var valueline = d3.line()
+    .x(function(d) { return x(d.time); })
+    .y(function(d) { return y(d.load); });
+
 function loadHistoryGraph(elementId, data) {
 
-    let margin = {top: 10, right: 30, bottom: 30, left: 60},
-        width = 550 - margin.left - margin.right,
-        height = 200 - margin.top - margin.bottom;
-
-    let svg = d3.select("#" + elementId)
+    var svg = d3.select("#" + elementId)
         .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform",
             "translate(" + margin.left + "," + margin.top + ")");
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis);
 
     console.log(data)
-
-    let x = d3.scaleTime()
-        .domain(d3.extent(data, function(d) { return d.time; }))
-        .range([0, width]);
-    svg.append("g")
-        .attr("transform", "translate(0," + height + ")")
-        .call(d3.axisBottom(x)
-            .tickFormat(d3.timeFormat("%H:%M:%S"))
-            .ticks(5));
-
-    // Add Y axis
-    let y = d3.scaleLinear()
-        .domain([0, d3.max(data, function(d) { return +d.load; })])
-        .range([height, 0]);
-    svg.append("g")
-        .call(d3.axisLeft(y)
-            .ticks(5));
+    x.domain(d3.extent(data, function(d) { return d.time; }))
+    y.domain([0, d3.max(data, function(d) { return +d.load; })])
 
     svg.append("path")
-        .datum(data)
+        .attr("class", "line")
         .attr("fill", "none")
         .attr("stroke", "steelblue")
         .attr("stroke-width", 1.5)
-        .attr("d", d3.line()
-            .x(function(d) { return x(d.time) })
-            .y(function(d) { return y(d.load) })
-        )
+        .attr("d", valueline(data))
+}
+
+function updateData(elementId, data) {
+
+    x.domain(d3.extent(data, function(d) { return d.time; }));
+    y.domain([0, d3.max(data, function(d) { return d.load; })]);
+
+    let svg = d3.select("#" + elementId).transition();
+
+    // Make the changes
+    svg.select(".line")   // change the line
+        .duration(750)
+        .attr("d", valueline(data));
+    svg.select(".x.axis") // change the x axis
+        .duration(750)
+        .call(xAxis);
+    svg.select(".y.axis") // change the y axis
+        .duration(750)
+        .call(yAxis);
 }
