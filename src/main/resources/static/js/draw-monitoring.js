@@ -2,8 +2,8 @@ let gauge1;
 let gauge2;
 let graph1
 
-let timeSpots = [];
-let cpuS = [];
+// let timeSlots = [];
+// let cpuS = [];
 
 window.onload = function () {
 
@@ -39,24 +39,26 @@ async function getCpuHistory() {
         type: 'Get',
         url: '/servers/get-cpu-history',
         success: function (data) {
-            console.log(data);
-            let i = 0;
+            // console.log("Draw" + data);
+            // let i = 0;
+            let dict = [];
+            let parseTime = d3.timeParse("%H:%M:%S");
             $.each(data, function(key, val){
 // This function will called for each key-val pair.
 // You can do anything here with them.
 //                 console.log("key " + key);
-                timeSpots[i] = key;
+//                 timeSlots[i] = key;
                 // console.log("value " + val);
-                cpuS[i] = val;
-                i++;
-
+                // cpuS[i] = val;
+                // i++;
+                dict.push({time: parseTime(key), load: val});
             });
             // cpu = data;
-//            if (graph1 == null) {
-                graph1 = loadHistoryGraph("historyGraph1", timeSpots, cpuS);
-//            } else {
-//                graph1.update(data);
-//            }
+           if (graph1 == null) {
+                graph1 = loadHistoryGraph("historyGraph1", dict);
+           } else {
+               graph1.update(data);
+           }
         }
     });
 }

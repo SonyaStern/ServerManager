@@ -1,6 +1,7 @@
 package com.server.controller;
 
 import com.server.service.MonitoringService;
+import java.time.LocalTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ public class MonitoringController {
 
     @GetMapping(value = "/get-cpu-history")
     @ResponseStatus(HttpStatus.OK)
-    public SortedMap<LocalDateTime, Float> getCpuHistory() {
+    public SortedMap<String, Float> getCpuHistory() {
         return monitoringService.getCpuHistory();
     }
 

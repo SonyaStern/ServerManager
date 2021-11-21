@@ -3,24 +3,40 @@ package com.server.service;
 import com.jezhumble.javasysmon.CpuTimes;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.MemoryStats;
+import com.opencsv.CSVWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-import java.util.*;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class MonitoringService {
 
-    private final JavaSysMon javaSysMon;
-    private static SortedMap<LocalDateTime, Float> cpuHistory = new TreeMap<>();
-    private static List<Long> memoryHistory = new LinkedList<>();
     private static final int LIST_CAPACITY = 60;
+    private static SortedMap<String, Float> cpuHistory = new TreeMap<>();
+    private static List<Long> memoryHistory = new LinkedList<>();
+    private final JavaSysMon javaSysMon;
 
-    public SortedMap<LocalDateTime, Float> getCpuHistory() {
+    @PostConstruct
+    public void setUp() {
+        if (!new File("loadHistory/CpuHistory.cvs").exists()) {
+            writeToCvs(new String[] {"Time", "Load"});
+        }
+//        TODO: load from CVS
+    }
+
+    public SortedMap<String, Float> getCpuHistory() {
 //        if (cpuHistory.size() > LIST_CAPACITY) {
 //            cpuHistory = cpuHistory.subMap(cpuHistory.size() - LIST_CAPACITY, cpuHistory.size());
 //        }
@@ -48,7 +64,9 @@ public class MonitoringService {
 //        TODO: change to debug
         log.info("CPU usage: {}", cpuUsage);
         log.info("CPU usage: {}", cpuUsage1);
-        cpuHistory.put(LocalDateTime.now(), cpuUsage1 * 100);
+//        writeToCvs(new String[] {LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm")),
+//                String.valueOf(cpuUsage1 * 100)});
+        cpuHistory.put(LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss")), cpuUsage1 * 100);
         return cpuUsage1 * 100;
     }
 
@@ -64,4 +82,13 @@ public class MonitoringService {
         return ((ram.getTotalBytes() - ram.getFreeBytes()) * 100) / ram.getTotalBytes();
     }
 
+
+    private void writeToCvs(String[] line) {
+        try (CSVWriter csvWriter = new CSVWriter(
+                new FileWriter("loadHistory/CpuHistory.cvs", true))) {
+            csvWriter.writeNext(line);
+        } catch (IOException e) {
+            log.error("Could not write to the CVS file");
+        }
+    }
 }

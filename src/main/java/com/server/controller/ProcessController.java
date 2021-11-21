@@ -5,6 +5,7 @@ import com.server.service.ProcessService;
 import com.server.service.RequestService;
 import com.server.service.ServerService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class ProcessController {
@@ -34,13 +36,13 @@ public class ProcessController {
     public String startServer(@PathVariable String name, Model model)
             throws IOException {
         ConcurrentSkipListSet<ServerInfo> servers = serverService.getServers();
-        System.out.println("name " + name);
+        log.debug("name " + name);
         for (ServerInfo server : servers) {
             if (server.getName().equals(name)) {
-                System.out.println("jar " + server.getJarDir());
+                log.debug("jar " + server.getJarDir());
                 processService.starter(server);
             } else {
-                System.out.println(2);
+                log.debug("2");
             }
         }
         model.addAttribute("servers", servers);
@@ -91,6 +93,4 @@ public class ProcessController {
         model.addAttribute("logFiles", serverInfo.getLogFiles());
         return "listLogFiles";
     }
-
-
 }
