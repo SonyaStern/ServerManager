@@ -7,11 +7,13 @@ window.onload = function () {
     // getCpuUsage();
     // getMemoryUsage();
     getCpuHistory();
+    getMemoryHistory();
 
     setInterval(function () {
         getCpuUsage();
         getMemoryUsage();
         updateCpuHistory();
+        updateMemoryHistory();
     }, 3000);
 }
 
@@ -76,6 +78,40 @@ async function getMemoryUsage() {
             } else {
                 gauge2.update(data);
             }
+        }
+    });
+}
+
+async function getMemoryHistory() {
+    $.ajax({
+        type: 'Get',
+        url: '/servers/get-memory-history',
+        success: function (data) {
+            // console.log("Draw" + data);
+            // let i = 0;
+            let dict = [];
+            let parseTime = d3.timeParse("%H:%M:%S");
+            $.each(data, function(key, val){
+// This function will called for each key-val pair.
+// You can do anything here with them.
+                dict.push({time: parseTime(key), load: val});
+            });
+            graph1 = loadHistoryGraph("historyGraph2", dict);
+        }
+    });
+}
+
+async function updateMemoryHistory() {
+    $.ajax({
+        type: 'Get',
+        url: '/servers/get-memory-history',
+        success: function (data) {
+            let dict = [];
+            let parseTime = d3.timeParse("%H:%M:%S");
+            $.each(data, function(key, val){
+                dict.push({time: parseTime(key), load: val});
+            });
+            graph1 = updateData("historyGraph2", dict);
         }
     });
 }

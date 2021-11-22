@@ -1,16 +1,14 @@
 package com.server.controller;
 
 import com.server.service.MonitoringService;
-import java.time.LocalTime;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.SortedMap;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,13 +30,13 @@ public class MonitoringController {
 
     @GetMapping(value = "/get-memory-usage")
     @ResponseStatus(HttpStatus.OK)
-    public long getMemoryUsage() {
+    public float getMemoryUsage() {
         return monitoringService.getMemoryUsagePercent();
     }
 
     @GetMapping(value = "/get-memory-history")
     @ResponseStatus(HttpStatus.OK)
-    public List<Long> getMemoryHistory() {
+    public SortedMap<String, Float> getMemoryHistory() {
         return monitoringService.getMemoryHistory();
     }
 }

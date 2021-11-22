@@ -50,6 +50,8 @@ function loadHistoryGraph(elementId, data) {
 
 function updateData(elementId, data) {
 
+    console.log(data)
+
     x.domain(d3.extent(data, function(d) { return d.time; }));
     y.domain([0, d3.max(data, function(d) { return d.load; })]);
 
